@@ -4,12 +4,13 @@ from rest_framework.response import Response
 from django.http import Http404
 from rest_framework import status
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from products.models import Product
 from products.serializators import ProductSerializer
 
 class ProductList(APIView):
-
     def get(self, request, format=None):
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
@@ -23,6 +24,8 @@ class ProductList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class ProductDetail(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def get_object(self, pk):
         try:
             return Product.objects.get(pk=pk)

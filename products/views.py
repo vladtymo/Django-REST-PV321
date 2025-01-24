@@ -6,11 +6,14 @@ from rest_framework import status
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.decorators import action
 
 from products.models import Product
 from products.serializators import ProductSerializer
 
 class ProductList(APIView):
+
+    @action(methods=['get'], detail=False)
     def get(self, request, format=None):
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
@@ -25,7 +28,7 @@ class ProductList(APIView):
     
 class ProductDetail(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def get_object(self, pk):
         try:
             return Product.objects.get(pk=pk)
